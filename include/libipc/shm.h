@@ -8,52 +8,51 @@
 namespace ipc {
 namespace shm {
 
-using id_t = void*;
+using id_t = void *;
 
-enum : unsigned {
-    create = 0x01,
-    open   = 0x02
-};
+enum : unsigned { create = 0x01, open = 0x02 };
 
-IPC_EXPORT id_t         acquire(char const * name, std::size_t size, unsigned mode = create | open);
-IPC_EXPORT void *       get_mem(id_t id, std::size_t * size);
+IPC_EXPORT id_t acquire(char const *name, std::size_t size, unsigned mode = create | open);
+IPC_EXPORT void *get_mem(id_t id, std::size_t *size);
 IPC_EXPORT std::int32_t release(id_t id);
-IPC_EXPORT void         remove (id_t id);
-IPC_EXPORT void         remove (char const * name);
+IPC_EXPORT void remove(id_t id);
+IPC_EXPORT void remove(char const *name);
 
 IPC_EXPORT std::int32_t get_ref(id_t id);
 IPC_EXPORT void sub_ref(id_t id);
+IPC_EXPORT bool resize(id_t id, size_t size);
 
 class IPC_EXPORT handle {
-public:
-    handle();
-    handle(char const * name, std::size_t size, unsigned mode = create | open);
-    handle(handle&& rhs);
+ public:
+  handle();
+  handle(char const *name, std::size_t size, unsigned mode = create | open);
+  handle(handle &&rhs);
 
-    ~handle();
+  ~handle();
 
-    void swap(handle& rhs);
-    handle& operator=(handle rhs);
+  void swap(handle &rhs);
+  handle &operator=(handle rhs);
 
-    bool         valid() const noexcept;
-    std::size_t  size () const noexcept;
-    char const * name () const noexcept;
+  bool valid() const noexcept;
+  std::size_t size() const noexcept;
+  char const *name() const noexcept;
 
-    std::int32_t ref() const noexcept;
-    void sub_ref() noexcept;
+  std::int32_t ref() const noexcept;
+  void sub_ref() noexcept;
 
-    bool acquire(char const * name, std::size_t size, unsigned mode = create | open);
-    std::int32_t release();
+  bool acquire(char const *name, std::size_t size, unsigned mode = create | open);
+  std::int32_t release();
+  bool resize(size_t size);
 
-    void* get() const;
+  void *get() const;
 
-    void attach(id_t);
-    id_t detach();
+  void attach(id_t);
+  id_t detach();
 
-private:
-    class handle_;
-    handle_* p_;
+ private:
+  class handle_;
+  handle_ *p_;
 };
 
-} // namespace shm
-} // namespace ipc
+}  // namespace shm
+}  // namespace ipc
